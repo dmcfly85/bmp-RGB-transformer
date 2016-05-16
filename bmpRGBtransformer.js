@@ -6,7 +6,6 @@ var rgbScheme = {}
 
 checkArgs = function () {
   filename = __dirname + "/" + process.argv[2];
-  file = fs.readFileSync(filename);
   if (process.argv[3]) {
     output = __dirname + "/" + process.argv[3]
   } else {
@@ -110,17 +109,17 @@ readBMP = function (filename, callback, callback_options) {
     getBMPinfo(data)
     checkBMP(data)
     setColorScheme()
-    callback(callback_options);
+    callback(data, callback_options);
   })
 }
 
-RGBTransform = function (r, g, b) {
+RGBTransform = function (file, rgb) {
   var wstream = fs.createWriteStream(output);
   var bytemarker = 0
   for (bytemarker = 0; bytemarker < file.length; bytemarker += rgbScheme.pixelDepth) {
-    data = file.readUIntLE(bytemarker, rgbScheme.pixelDepth);
+    var data = file.readUIntLE(bytemarker, rgbScheme.pixelDepth);
     if (bytemarker >= bmpInfo.pixelStart) {
-      data = new Pixel(data).adjustRGB(r, g, b)
+      data = new Pixel(data).adjustRGB(rgb)
     }
     var buf = new Buffer(rgbScheme.pixelDepth);
     buf.writeUIntLE(data, 0, rgbScheme.pixelDepth)
