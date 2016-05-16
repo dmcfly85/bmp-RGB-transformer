@@ -1,6 +1,6 @@
 const chai = require('chai');
 const expect = chai.expect;
-const bmp = require('../bmpRGBtransformer.js')
+const bmp = require('../lib/bmpRGBtransformer.js')
 const fs = require('fs');
 var fileExists = require('file-exists');
 
