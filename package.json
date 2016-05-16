@@ -1,0 +1,19 @@
+{
+  "name": "node-bitmap-trasformer",
+  "version": "0.1.0",
+  "description": "Adjust RGB values of bitmap with type BM",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "bitmap",
+    "rgvales"
+  ],
+  "author": "Dustin McBride",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^2.4.5"
+  }
+}
