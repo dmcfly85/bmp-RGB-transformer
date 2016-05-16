@@ -32,3 +32,8 @@ node_modules
 # Optional REPL history
 .node_repl_history
 >>>>>>> aacba5a9bca5946394cfc76680eb510ddb9b52db
+
+.eselintrc
+test/testimages/test-dude-16bit.bmp
+test/testimages/test-dude-24bit.bmp
+test/testimages/test-dude-8bit.bmp
