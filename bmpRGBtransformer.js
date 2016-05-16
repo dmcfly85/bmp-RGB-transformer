@@ -1,20 +1,11 @@
+module.exports.bmpRGBtransformer = function (filename, output, rgb, cb) {
+
 const fs = require('fs');
 const headers = {};
 const bmpInfo = {};
 var byteMakerAdvancer;
 var rgbScheme = {}
 
-checkArgs = function () {
-  filename = __dirname + "/" + process.argv[2];
-  if (process.argv[3]) {
-    output = __dirname + "/" + process.argv[3]
-  } else {
-    output = __dirname + "/bmp-trasformed.bmp"
-  }
-  r_delta = process.argv[4] || 1;
-  g_delta = process.argv[5] || 1;
-  b_delta = process.argv[6] || 1;
-}
 
 checkBMP = function () {
   if (bmpInfo.type == "BM" && bmpInfo.colorDepth <= 24) {} else {
@@ -35,6 +26,7 @@ getBMPinfo = function (file) {
   bmpInfo.subheadersize = file.readUInt32LE(14)
 }
 
+// pixel schemes for colorDepths
 setColorScheme = function () {
   if (bmpInfo.colorDepth == 8) rgbScheme = {
     pixelDepth: 1,
@@ -55,9 +47,9 @@ setColorScheme = function () {
     blueMax: 31
   }
   if (bmpInfo.colorDepth == 24) rgbScheme = {
-    pixelDepth: 3,
+    pixelDepth: 4,
     red:  [0,7,8],
-    green:  [8,15, 8],
+    green:  [8,15,8],
     blue:    [16,23, 8],
     redMax: 255,
     greenMax: 255,
@@ -65,6 +57,7 @@ setColorScheme = function () {
   }
 }
 
+//zero padding
 zp = function (n, c) {
   var s = String(n);
   if (s.length < c) {
@@ -73,6 +66,7 @@ zp = function (n, c) {
     return s
   }
 };
+
 
 Pixel = function (dec) {
   this.dec = dec;
@@ -83,6 +77,8 @@ Pixel = function (dec) {
   if (rgbScheme.hasOwnProperty('alpha')) this.alpha = this.getDecColor('alpha')
 }
 
+
+//calculates decimal value from binary based on rgb color depth schemes
 Pixel.prototype.getDecColor = function (color) {
   binary = ""
   for (var i = rgbScheme[color][0]; i <= rgbScheme[color][1]; i++) {
@@ -93,12 +89,12 @@ Pixel.prototype.getDecColor = function (color) {
 
 Pixel.prototype.adjustRGB = function (rgb) {
   var red = this.red * rgb[0];
-  if (red > rgbScheme.RedMax) value = rgbScheme.RedMax;
+  if (red > rgbScheme.redMax) red = rgbScheme.redMax;
   var green = this.green * rgb[1];
   if (green > rgbScheme.greenMax) green = rgbScheme.greenMax;
   var blue = this.blue * rgb[2];
   if (blue > rgbScheme.blueMax) blue = rgbScheme.blueMax;
-  return parseInt(zp(red.toString(2), rgbScheme['red'][2]) + zp(green.toString(2), rgbScheme['green'][2]) + zp(blue.toString(2), rgbScheme['blue'][2]), 2)
+  return parseInt(zp(red.toString(2), rgbScheme['red'][2]) + zp(green.toString(2), rgbScheme['green'][2]) + zp(blue.toString(2), rgbScheme['blue'][2]), 2);
 };
 
 readBMP = function (filename, callback, callback_options) {
@@ -126,8 +122,12 @@ RGBTransform = function (file, rgb) {
     wstream.write(buf);
   }
   wstream.end();
-  console.log(bmpInfo);
+  //console.log(bmpInfo);
+  if (cb) {
+    cb();
+  }
 }
 
-checkArgs();
-readBMP(filename, RGBTransform, [1,1,1] )
+//checkArgs();
+readBMP(filename, RGBTransform, rgb )
+}
